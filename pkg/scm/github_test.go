@@ -15,7 +15,7 @@ import (
 func TestNewGithub(t *testing.T) {
 	ctx := context.Background()
 
-	gh := NewGithub(ctx, sonarqube.New("", ""), "mytoken")
+	gh := NewGithub(ctx, sonarqube.New("", ""), "mytoken", true)
 
 	assert.NotNil(t, gh)
 }
@@ -34,6 +34,7 @@ func TestGithubPublishIssuesReview(t *testing.T) {
 	gh := &Github{
 		sonar:  sonarqube.New("root", "key"),
 		client: github.NewClient(mockedHTTPClient),
+		config: GithubConfig{ReviewEvent: REVIEW_EVENT_REQUEST_CHANGES},
 	}
 
 	pr := &sonarqube.PullRequest{
@@ -54,9 +55,7 @@ func TestGithubPublishIssuesReview(t *testing.T) {
 		},
 	}
 
-	reviewEvent := REVIEW_EVENT_REQUEST_CHANGES
-
-	err := gh.PublishIssuesReviewFor(ctx, issues, pr, reviewEvent)
+	err := gh.PublishIssuesReviewFor(ctx, issues, pr)
 	assert.NoError(t, err)
 
 }

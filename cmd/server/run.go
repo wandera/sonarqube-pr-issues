@@ -63,7 +63,7 @@ func Run(cmd *cobra.Command, args []string) {
 
 	// Sonarqube
 	sonar := sonarqube2.New(sonarRootURL, apiKey)
-	var gh scm2.SCM = scm2.NewGithub(ctx, sonar, ghToken)
+	var gh scm2.SCM = scm2.NewGithub(ctx, sonar, ghToken, requestChanges)
 
 	// Process queue
 	queue := make(chan func() error, 0)
@@ -184,7 +184,7 @@ func PublishIssues(ctx context.Context, sonar *sonarqube2.Sonarqube, projectScm 
 	}
 
 	// Publish review
-	err = projectScm.PublishIssuesReviewFor(ctx, issues.Issues, pr, requestChanges)
+	err = projectScm.PublishIssuesReviewFor(ctx, issues.Issues, pr)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to publish issues review for branch %s of the project %s", branch, project))
 	}

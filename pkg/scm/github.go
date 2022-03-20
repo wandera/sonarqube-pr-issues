@@ -22,6 +22,11 @@ const (
 type Github struct {
 	client *github.Client
 	sonar  *sonarqube.Sonarqube
+	config GithubConfig
+}
+
+type GithubConfig struct {
+	ReviewEvent string
 }
 
 type GithubPath struct {
@@ -29,7 +34,7 @@ type GithubPath struct {
 	Repo  string
 }
 
-func NewGithub(ctx context.Context, sonar *sonarqube.Sonarqube, token string) *Github {
+func NewGithub(ctx context.Context, sonar *sonarqube.Sonarqube, token string, requestChanges bool) *Github {
 	// Token source
 	ts := oauth2.StaticTokenSource(
 		&oauth2.Token{AccessToken: token},
@@ -41,21 +46,23 @@ func NewGithub(ctx context.Context, sonar *sonarqube.Sonarqube, token string) *G
 	// Github client
 	client := github.NewClient(tc)
 
-	return &Github{
-		client: client,
-		sonar:  sonar,
-	}
-}
-
-// PublishIssuesReviewFor publishes a review with a comment for each issue
-func (g *Github) PublishIssuesReviewFor(ctx context.Context, issues []sonarqube.Issue, pr *sonarqube.PullRequest, requestChanges bool) error {
 	var reviewEvent string
 	if requestChanges {
 		reviewEvent = REVIEW_EVENT_REQUEST_CHANGES
 	} else {
 		reviewEvent = REVIEW_EVENT_COMMENT
 	}
+	config := GithubConfig{ReviewEvent: reviewEvent}
 
+	return &Github{
+		client: client,
+		sonar:  sonar,
+		config: config,
+	}
+}
+
+// PublishIssuesReviewFor publishes a review with a comment for each issue
+func (g *Github) PublishIssuesReviewFor(ctx context.Context, issues []sonarqube.Issue, pr *sonarqube.PullRequest) error {
 	comments := make([]*github.DraftReviewComment, 0)
 
 	// Create a comment for each issue
@@ -78,7 +85,7 @@ func (g *Github) PublishIssuesReviewFor(ctx context.Context, issues []sonarqube.
 
 	reviewRequest := &github.PullRequestReviewRequest{
 		Body:     &body,
-		Event:    &reviewEvent,
+		Event:    &g.config.ReviewEvent,
 		Comments: comments,
 	}
 
