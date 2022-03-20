@@ -6,6 +6,7 @@ import (
 
 var serverPort int
 var workers int
+var event string
 
 var ServerCmd = &cobra.Command{
 	Use:   "server",
@@ -15,5 +16,6 @@ var ServerCmd = &cobra.Command{
 func init() {
 	ServerCmd.PersistentFlags().IntVarP(&serverPort, "port", "p", 8080, "Server port")
 	ServerCmd.PersistentFlags().IntVarP(&workers, "workers", "w", 30, "Workers count")
+	ServerCmd.PersistentFlags().StringVarP(&event, "event", "e", "REQUEST_CHANGES", "GitHub review event type")
 	ServerCmd.AddCommand(RunCmd)
 }

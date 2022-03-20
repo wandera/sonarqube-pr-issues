@@ -60,7 +60,6 @@ func Run(cmd *cobra.Command, args []string) {
 
 		return
 	}
-
 	// Sonarqube
 	sonar := sonarqube2.New(sonarRootURL, apiKey)
 	var gh scm2.SCM = scm2.NewGithub(ctx, sonar, ghToken)
@@ -127,7 +126,6 @@ func WebhookHandler(webhookSecret string, sonar *sonarqube2.Sonarqube, gh scm2.S
 		logrus.Infoln("Adding to the queue", webhook.Project.Key, "->", webhook.Branch.Name)
 		queue <- func() error {
 			logrus.Infoln("Processing", webhook.Project.Key, "->", webhook.Branch.Name)
-
 			if err := PublishIssues(context.Background(), sonar, gh, webhook.Project.Key, webhook.Branch.Name); err != nil {
 				return err
 			}
@@ -165,7 +163,6 @@ func PublishIssues(ctx context.Context, sonar *sonarqube2.Sonarqube, projectScm 
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("failed to list issues for the given PR branch %s of the project %s", branch, project))
 	}
-
 	// Filter issues
 	issues = issues.FilterByStatus("OPEN").FilterOutByTag(sonarqube2.TAG_PUBLISHED)
 
@@ -175,7 +172,7 @@ func PublishIssues(ctx context.Context, sonar *sonarqube2.Sonarqube, projectScm 
 	}
 
 	// Publish review
-	err = projectScm.PublishIssuesReviewFor(ctx, issues.Issues, pr)
+	err = projectScm.PublishIssuesReviewFor(ctx, issues.Issues, pr, event)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to publish issues review for branch %s of the project %s", branch, project))
 	}
