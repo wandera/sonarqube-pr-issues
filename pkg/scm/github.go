@@ -79,11 +79,13 @@ func (g *Github) PublishIssuesReviewFor(ctx context.Context, issues []sonarqube.
 	if err != nil {
 		return errors.Wrap(err, "failed to convert PR number to int")
 	}
+
 	// Parse PR path
 	ghPath, err := parseGithubPath(pr.URL)
 	if err != nil {
 		return errors.Wrap(err, "failed to parse github path")
 	}
+
 	// Create the review
 	out, res, err := g.client.PullRequests.CreateReview(ctx, ghPath.Owner, ghPath.Repo, prNumber, reviewRequest)
 	if err != nil {
