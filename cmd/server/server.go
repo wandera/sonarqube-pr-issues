@@ -17,6 +17,6 @@ var ServerCmd = &cobra.Command{
 func init() {
 	ServerCmd.PersistentFlags().IntVarP(&serverPort, "port", "p", 8080, "Server port")
 	ServerCmd.PersistentFlags().IntVarP(&workers, "workers", "w", 30, "Workers count")
-	ServerCmd.PersistentFlags().StringVarP(&reviewEvent, "review-event", "e", scm.REVIEW_EVENT_REQUEST_CHANGES, "GitHub review event type")
+	ServerCmd.PersistentFlags().StringVar(&reviewEvent, "review-event", scm.REVIEW_EVENT_REQUEST_CHANGES, "GitHub review event type")
 	ServerCmd.AddCommand(RunCmd)
 }

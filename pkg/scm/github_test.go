@@ -54,9 +54,9 @@ func TestGithubPublishIssuesReview(t *testing.T) {
 		},
 	}
 
-	event := "REQUEST_CHANGES"
+	reviewEvent := REVIEW_EVENT_REQUEST_CHANGES
 
-	err := gh.PublishIssuesReviewFor(ctx, issues, pr, event)
+	err := gh.PublishIssuesReviewFor(ctx, issues, pr, reviewEvent)
 	assert.NoError(t, err)
 
 }
