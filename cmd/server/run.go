@@ -184,7 +184,7 @@ func PublishIssues(ctx context.Context, sonar *sonarqube2.Sonarqube, projectScm 
 	}
 
 	// Publish review
-	err = projectScm.PublishIssuesReviewFor(ctx, issues.Issues, pr, reviewEvent)
+	err = projectScm.PublishIssuesReviewFor(ctx, issues.Issues, pr, requestChanges)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("Failed to publish issues review for branch %s of the project %s", branch, project))
 	}

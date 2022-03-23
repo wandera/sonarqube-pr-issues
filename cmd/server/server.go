@@ -1,13 +1,12 @@
 package server
 
 import (
-	"github.com/herlon214/sonarqube-pr-issues/pkg/scm"
 	"github.com/spf13/cobra"
 )
 
 var serverPort int
 var workers int
-var reviewEvent string
+var requestChanges bool
 
 var ServerCmd = &cobra.Command{
 	Use:   "server",
@@ -17,6 +16,6 @@ var ServerCmd = &cobra.Command{
 func init() {
 	ServerCmd.PersistentFlags().IntVarP(&serverPort, "port", "p", 8080, "Server port")
 	ServerCmd.PersistentFlags().IntVarP(&workers, "workers", "w", 30, "Workers count")
-	ServerCmd.PersistentFlags().StringVar(&reviewEvent, "review-event", scm.REVIEW_EVENT_REQUEST_CHANGES, "GitHub review event type")
+	ServerCmd.PersistentFlags().BoolVar(&requestChanges, "request-changes", true, "When issue is found, mark PR as changes requested")
 	ServerCmd.AddCommand(RunCmd)
 }

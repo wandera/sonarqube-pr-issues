@@ -15,6 +15,7 @@ import (
 )
 
 const (
+	REVIEW_EVENT_COMMENT         = "COMMENT"
 	REVIEW_EVENT_REQUEST_CHANGES = "REQUEST_CHANGES"
 )
 
@@ -47,7 +48,14 @@ func NewGithub(ctx context.Context, sonar *sonarqube.Sonarqube, token string) *G
 }
 
 // PublishIssuesReviewFor publishes a review with a comment for each issue
-func (g *Github) PublishIssuesReviewFor(ctx context.Context, issues []sonarqube.Issue, pr *sonarqube.PullRequest, reviewEvent string) error {
+func (g *Github) PublishIssuesReviewFor(ctx context.Context, issues []sonarqube.Issue, pr *sonarqube.PullRequest, requestChanges bool) error {
+	var reviewEvent string
+	if requestChanges {
+		reviewEvent = REVIEW_EVENT_REQUEST_CHANGES
+	} else {
+		reviewEvent = REVIEW_EVENT_COMMENT
+	}
+
 	comments := make([]*github.DraftReviewComment, 0)
 
 	// Create a comment for each issue
